@@ -26,6 +26,7 @@ private:
     Node<T>* remove(Node<T>* node, const T& value);
     void destroy(Node<T>* node);
     bool search(Node<T>* node, const T& value) const;
+    Node<T>* splay(Node<T>* node, const T& value);
 
 
 public:

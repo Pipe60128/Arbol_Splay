@@ -6,7 +6,7 @@ using namespace std;
 /* util */
 template <typename T>
 int SplayTree<T>::height(Node<T>* n) const {
-    return n ? n->getHeight():0;
+    return n ? n->getHeight() : 0;
 }
 
 template <typename T>
@@ -38,14 +38,14 @@ Node<T>* SplayTree<T>::zag(Node<T>* node) {
 
 template <typename T>
 Node<T>* SplayTree<T>::zigZig(Node<T>* node) {
-    node->setLeft(zag(node->getLeft()));
+    node = zag(node->getLeft());
     return zag(node);
 }
 
 template <typename T>
 Node<T>* SplayTree<T>::zagZag(Node<T>* node) {
-    node->setRight(zig(node->getRight()));
-    return zig(node);
+    node = zag(node->getRight());
+    return zag(node);
 }
 
 template <typename T>
@@ -60,41 +60,88 @@ Node<T>* SplayTree<T>:: zagZig(Node<T>* node) {
     return zag(node);
 }
 
+template <typename T>
+Node<T>* SplayTree<T>::splay(Node<T>* node, const T& value) {
+    if (!node || node->getData() == value) {
+        return node;
+    }
+
+    // Valor está en el subárbol izquierdo
+    if (value < node->getData()) {
+        if (!node->getLeft()) return node;
+        
+        // Zig-Zig (Left Left)
+        if (value < node->getLeft()->getData()) {
+            if (node->getLeft()->getLeft()) {
+                node->getLeft()->setLeft(splay(node->getLeft()->getLeft(), value));
+                return zigZig(node);
+            }
+        }
+        // Zig-Zag (Left Right)
+        else if (value > node->getLeft()->getData()) {
+            if (node->getLeft()->getRight()) {
+                node->getLeft()->setRight(splay(node->getLeft()->getRight(), value));
+                return zigZag(node);
+            }
+        }
+        
+        // Zig simple
+        return node->getLeft() ? zig(node) : node;
+    }
+    // Valor está en el subárbol derecho
+    else {
+        if (!node->getRight()) return node;
+        
+        // Zag-Zag (Right Right)
+        if (value > node->getRight()->getData()) {
+            if (node->getRight()->getRight()) {
+                node->getRight()->setRight(splay(node->getRight()->getRight(), value));
+                return zagZag(node);
+            }
+        }
+        // Zag-Zig (Right Left)
+        else if (value < node->getRight()->getData()) {
+            if (node->getRight()->getLeft()) {
+                node->getRight()->setLeft(splay(node->getRight()->getLeft(), value));
+                return zagZig(node);
+            }
+        }
+        
+        // Zag simple
+        return node->getRight() ? zag(node) : node;
+    }
+}
+ 
+
 
 template <typename T>
 Node<T>* SplayTree<T>::insert(Node<T>* node, const T& value) {
     if (!node) {
         return new Node<T>(value);
     }
-    if (value < node->getData()) {
-        node->setLeft(insert(node->getLeft(),value));
-    }else if (value > node->getData()) {
-        node->setRight(insert(node->getRight(), value));
-    }else {
+    node = splay(node, value);
+    
+    if (node->getData() == value) {
         return node;
     }
 
-    node->setHeight(1 + maxValue(height(node->getLeft()),height(node->getRight())));
+    Node<T>* newNode = new Node<T>(value);
+
+    if (value < node->getData()) {
+        newNode->setRight(node);
+        newNode->setLeft(node->getLeft());
+        node->setLeft(nullptr);
+    } else {
+        newNode->setLeft(node);
+        newNode->setRight(node->getRight());
+        node->setRight(nullptr);
+    }
     
-    if ( value < node->getLeft()->getData()) {
-        return rotateRight(node);
-    }
-    if ( value > node->getRight()->getData()) {
-        return rotateLeft(node);
-    }
-    if ( value < node->getLeft()->getLeft()->getData()) {
-        return zigZig(node);
-    }
-    if ( value > node->getRight()->getRight()->getData()) {
-        return zagZag(node);
-    }
-    if (value > node->getLeft()->getRight()->getData()) {
-        return zigZag(node);
-    }
-    if (value < node->getRight()->getLeft()->getData()) {
-        return zagZig(node);
-    }
-    return node = root;
+    
+    node->setHeight(1 + maxValue(height(node->getLeft()), height(node->getRight())));
+    newNode->setHeight(1 + maxValue(height(newNode->getLeft()), height(newNode->getRight())));
+    
+    return newNode;
 }
 template <typename T>
 Node<T>* SplayTree<T>::remove(Node<T>* node, const T& value) {
@@ -127,28 +174,32 @@ Node<T>* SplayTree<T>::remove(Node<T>* node, const T& value) {
             node->setLeft(remove(node->getLeft(), node->getData()));
         }
     } 
+
+    if (node == nullptr) return nullptr;
+
     node->setHeight(1 + maxValue(height(node->getLeft()),height(node->getRight())));
     
-    if ( value < node->getLeft()->getData()) {
-        return rotateRight(node);
+    if ( node-> getLeft() && node->getLeft()->getLeft() && value < node->getLeft()->getData()) {
+        return zigzig(node); //check zigzig
     }
-    if ( value > node->getRight()->getData()) {
-        return rotateLeft(node);
+    if (  node-> getRight() && node->getRight()->getRight() && value > node->getRight()->getData()) {
+        return zagzag(node); // check zagzag
     }
-    if ( value < node->getLeft()->getLeft()->getData()) {
-        return zigZig(node);
+    if (  node-> getRight() && node->getRight()->getLeft() && value < node->getRight()->getData()) {
+        return zigZig(node); // check zagzig
     }
-    if ( value > node->getRight()->getRight()->getData()) {
-        return zagZag(node);
+    if ( node-> getLeft() && node->getLeft()->getRight() && value > node->getLeft()->getData()) {
+        return zigZag(node); // check zigzag
     }
-    if (value > node->getLeft()->getRight()->getData()) {
-        return zigZag(node);
+    if (node->getLeft() && value > node->getLeft()->getData()) {
+        return zig(node);
     }
-    if (value < node->getRight()->getLeft()->getData()) {
-        return zagZig(node);
+    if (node->getRight() && value < node->getData()) {
+        return zag(node);
     }
-    return node = root;
+    return node;
 }
+
 template <typename T>
 void SplayTree<T>::destroy(Node<T>* node) {
     delete node;
@@ -176,10 +227,8 @@ void SplayTree<T>::print(Node<T>* node, int nr, int nl) const {
     print(node->getRight(), nr + 1, nl);
     for (int i = 0; i < nr + nl; i++){
         cout<<"  ";
-        i-1; 
         for (int j = 0; j < nr + nl; j++){
         cout<<" "; 
-        j-1;
         }
     }
     if (nr < nl ){
@@ -200,7 +249,7 @@ void SplayTree<T>::insert(const T& value) {
     root= insert(root, value);
 }
 
-/*
+
 template<typename T>
 bool SplayTree<T>::search(Node<T>* node, const T& value) const {
     if (node == nullptr) {
@@ -233,5 +282,5 @@ void SplayTree<T>::search(const T& v) const {
     }
     
 }
-*/
+
 
