@@ -1,17 +1,17 @@
 #pragma once
 #include "Node.h"
 template <typename T>
-T Node<T>::getData() {
+T Node<T>::getData() const {
     return data;
 }
 
 template <typename T>
-Node<T>* Node<T>::getLeft() {
+Node<T>* Node<T>::getLeft() const {
     return left;
 }
 
 template <typename T>
-Node<T>* Node<T>::getRight() {
+Node<T>* Node<T>::getRight() const {
     return right;
 }
 

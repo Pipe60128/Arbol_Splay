@@ -9,9 +9,6 @@ private:
     Node<T>* root;
     void print(Node<T>* node, int nr, int nl) const;
     
-    /* util */
-    int height(Node<T>* n) const;
-    int maxValue(int a, int b) const;
 
     /* rotations */
     Node<T>* zig(Node<T>* node);
@@ -22,11 +19,9 @@ private:
     Node<T>* zagZig(Node<T>* node);
 
     /*Operations*/
-    Node<T>* insert(Node<T>* node, const T& value);
-    Node<T>* remove(Node<T>* node, const T& value);
-    void destroy(Node<T>* node);
-    bool search(Node<T>* node, const T& value) const;
+    void clear(Node<T>* node);
     Node<T>* splay(Node<T>* node, const T& value);
+    int size(Node<T>* node) const;
 
 
 public:
@@ -35,8 +30,9 @@ public:
     void clear();
     void print() const;
     void insert(const T& value);
-    void remove(const T& value);
-    void search(const T& value) const;
+    bool remove(const T& value);
+    bool search(const T& value);
+    int size() const;
     
 
 

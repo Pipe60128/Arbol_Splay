@@ -10,9 +10,9 @@ private:
     int height;
 public:
     explicit Node(const T& v) : data(v), left(nullptr), right(nullptr), height(1){}
-    T getData();
-    Node<T>* getLeft();
-    Node<T>* getRight();
+    T getData() const;
+    Node<T>* getLeft() const;
+    Node<T>* getRight() const;
     int getHeight() const;
     void setData(const T& v);
     void setRight(Node<T>* right);
