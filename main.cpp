@@ -18,13 +18,13 @@ int main() {
     cout<<"\n"<<endl;
     arbol.insert(5);
     arbol.print();
-    cout<<"remove "<<endl;
+    cout<<"--remove--"<<endl;
     arbol.remove(25);
     arbol.print();
-    cout<<"search "<<endl;
+    cout<<"--search--"<<endl;
     arbol.search(20);
     arbol.print();
-    cout<<"size "<<endl;
+    cout<<"--size--"<<endl;
     cout<< arbol.size()<<endl;
     return 0;
 }

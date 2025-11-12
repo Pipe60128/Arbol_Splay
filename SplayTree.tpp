@@ -4,7 +4,8 @@
 using namespace std;
 
 
-/* rotations */
+/*--------rotations--------*/
+//complejidad  O(1)
 template <typename T>
 Node<T>* SplayTree<T>::zig(Node<T>* node) {
     Node<T>* temp= node->getLeft();
@@ -13,6 +14,8 @@ Node<T>* SplayTree<T>::zig(Node<T>* node) {
     node->setLeft(temp2);
     return temp;
 }
+
+//complejidad  O(1)
 template <typename T>
 Node<T>* SplayTree<T>::zag(Node<T>* node) {
     Node<T>* temp= node->getRight();
@@ -22,30 +25,36 @@ Node<T>* SplayTree<T>::zag(Node<T>* node) {
     return temp;
 }
 
+//complejidad  O(1)
 template <typename T>
 Node<T>* SplayTree<T>::zigZig(Node<T>* node) {
     node = zig(node->getLeft());
     return zig(node);
 }
 
+//complejidad  O(1)
 template <typename T>
 Node<T>* SplayTree<T>::zagZag(Node<T>* node) {
     node = zag(node->getRight());
     return zag(node);
 }
 
+//complejidad  O(1)
 template <typename T>
 Node<T>* SplayTree<T>:: zigZag(Node<T>* node) {
     node->setLeft(zag(node->getLeft()));
     return zig(node);
 }
 
+//complejidad  O(1)
 template <typename T>
 Node<T>* SplayTree<T>:: zagZig(Node<T>* node) {
     node->setRight(zig(node->getRight()));
     return zag(node);
 }
 
+/*-----------Operations----------*/
+//complejidad  O(logn)
 template <typename T>
 Node<T>* SplayTree<T>::splay(Node<T>* node, const T& value) {
     if (!node || node->getData() == value) {
@@ -101,6 +110,7 @@ Node<T>* SplayTree<T>::splay(Node<T>* node, const T& value) {
     }
 }
 
+//complejidad  O(logn)
 template <typename T>
 void SplayTree<T>::insert(const T& value) {
     if (!root) {
@@ -128,7 +138,7 @@ void SplayTree<T>::insert(const T& value) {
 }
 
 
-
+//complejidad  O(logn)
 template <typename T>
 bool SplayTree<T>::remove(const T& value) {
     if (!root) return false;
@@ -155,14 +165,14 @@ bool SplayTree<T>::remove(const T& value) {
     return true;
 }
 
-
-
-
+//complejidad  O(n)
 template <typename T>
-SplayTree<T>::~SplayTree() {
-    clear();
-    
+void SplayTree<T>::clear() {
+    clear(root);
+    root = nullptr;
 }
+
+//complejidad  O(n)
 template <typename T>
 void SplayTree<T>::clear(Node<T>* node) {
     if (!node) return;
@@ -172,13 +182,13 @@ void SplayTree<T>::clear(Node<T>* node) {
 
 }
 
+//complejidad  O(n)
 template <typename T>
-void SplayTree<T>::clear() {
-    clear(root);
-    root = nullptr;
+void SplayTree<T>::print() const {
+    print(root,0,0);
 }
 
- /*Print*/
+ //complejidad  O(n)
 template <typename T>
 void SplayTree<T>::print(Node<T>* node, int nr, int nl) const {
     if (node == nullptr) return ;
@@ -189,20 +199,31 @@ void SplayTree<T>::print(Node<T>* node, int nr, int nl) const {
         cout<<" "; 
         }
     }
-    if (nr < nl ){
-        cout<<node->getData()<<"-<"<<endl;
-    } else if ( nr > nl ){
-        cout<<node->getData()<<"-<"<<endl;
-    } else {
-        cout<<node->getData()<<endl;
-    }
+    if (nr < nl + 1 ){
+        if (node->getLeft() == nullptr && node->getRight() == nullptr){
+            cout<<node->getData()<<endl;
+        } else {
+            cout<<node->getData()<<"-<"<<endl;
+        }
+    }else if ( nr > nl ){
+        if (node->getLeft() == nullptr && node->getRight() == nullptr){
+            cout<<node->getData()<<endl;
+        } else {
+            cout<<node->getData()<<"-<"<<endl;
+        }
+    } 
+    
     print(node->getLeft(), nr, nl + 1);
 }
-template <typename T>
-void SplayTree<T>::print() const {
-    print(root,0,0);
+
+
+//complejidad  O(n)
+template<typename T>
+int SplayTree<T>::size() const {
+    return size(root);
 }
 
+//complejidad  O(n)
 template<typename T>
 int SplayTree<T>::size(Node<T>* node) const {
     if (!node) {
@@ -211,14 +232,9 @@ int SplayTree<T>::size(Node<T>* node) const {
     return 1 + size(node->getLeft()) + size(node->getRight());
 }
 
-template<typename T>
-int SplayTree<T>::size() const {
-    return size(root);
-}
 
 
-
-
+//complejidad  O(logn)
 template<typename T>
 bool SplayTree<T>::search(const T& v)  {
     root = splay(root, v);

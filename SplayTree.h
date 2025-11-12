@@ -7,8 +7,6 @@ template <typename T>
 class SplayTree {
 private:
     Node<T>* root;
-    void print(Node<T>* node, int nr, int nl) const;
-    
 
     /* rotations */
     Node<T>* zig(Node<T>* node);
@@ -22,11 +20,14 @@ private:
     void clear(Node<T>* node);
     Node<T>* splay(Node<T>* node, const T& value);
     int size(Node<T>* node) const;
+    void print(Node<T>* node, int nr, int nl) const;
 
 
 public:
     SplayTree(): root(nullptr){}
-    ~SplayTree();
+    ~SplayTree() {
+        clear();
+    }
     void clear();
     void print() const;
     void insert(const T& value);
